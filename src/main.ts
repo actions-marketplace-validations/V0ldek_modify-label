@@ -1,19 +1,55 @@
 import * as core from '@actions/core'
-import {wait} from './wait'
+import * as github from '@actions/github'
 
 async function run(): Promise<void> {
   try {
-    const ms: string = core.getInput('milliseconds')
-    core.debug(`Waiting ${ms} milliseconds ...`) // debug is only output if you set the secret `ACTIONS_STEP_DEBUG` to true
-
-    core.debug(new Date().toTimeString())
-    await wait(parseInt(ms, 10))
-    core.debug(new Date().toTimeString())
-
-    core.setOutput('time', new Date().toTimeString())
+    await actuallyRun()
   } catch (error) {
     if (error instanceof Error) core.setFailed(error.message)
   }
 }
 
+async function actuallyRun(): Promise<void> {
+  const token = core.getInput('token')
+  const octokit = github.getOctokit(token)
+  const issueId: string = core.getInput('issue-id')
+  const labelId: string = core.getInput('label-id')
+  const context = github.context
+  const graphql = octokit.graphql.defaults({
+    headers: {
+      authorization: `token ${token}`
+    }
+  })
+
+  const query = `
+query GetLabels($owner: String!, $repo: String!, $issueId: String!, $labelId: String!, $limit: Int = 1000) {
+  repository(owner: $owner, $repo: $repo) {
+    issue(id: $issueId) {
+      labels(first: $limit) {
+        nodes {
+          id
+        }
+      }
+    }
+  }
+}`
+  const queryResult: GetLabelsResponse = await graphql(query, {
+    ...context.repo,
+    issueId,
+    labelId
+  })
+
+  core.setOutput('result', JSON.stringify(queryResult))
+}
+
 run()
+
+interface GetLabelsResponse {
+  repository: {
+    issue: {
+      labels: {
+        nodes: [{id: string}]
+      }
+    }
+  }
+}

@@ -1,11 +1,16 @@
-name: 'Your name here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'Add label'
+description: 'Add a label to an issue or pull request'
+author: 'V0ldek (mat@gienieczko.com)'
 inputs:
-  milliseconds: # change this
+  issue-id: # ID of the issue to modify
     required: true
-    description: 'input description here'
-    default: 'default value if applicable'
+    description: 'ID of the issue to modify'
+  label-id: # ID of the label to add
+    required: true
+    description: 'ID of the label to add'
+  token: # GitHub access token
+    required: true
+    description: 'GitHub access token'
 runs:
   using: 'node16'
   main: 'dist/index.js'
