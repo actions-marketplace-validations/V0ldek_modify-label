@@ -12,7 +12,7 @@ async function run(): Promise<void> {
 async function actuallyRun(): Promise<void> {
   const token = core.getInput('token')
   const octokit = github.getOctokit(token)
-  const issueId: string = core.getInput('issue-id')
+  const issueNumber: string = core.getInput('issue-number')
   // const labelId: string = core.getInput('label-id')
   const context = github.context
   const graphql = octokit.graphql.defaults({
@@ -35,7 +35,7 @@ async function actuallyRun(): Promise<void> {
   }`
   const queryResult: GetLabelsResponse = await graphql(query, {
     ...context.repo,
-    issueId
+    issueNumber
   })
 
   core.setOutput('result', JSON.stringify(queryResult))

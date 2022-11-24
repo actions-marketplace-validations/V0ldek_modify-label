@@ -2,9 +2,9 @@ name: 'Add label'
 description: 'Add a label to an issue or pull request'
 author: 'V0ldek (mat@gienieczko.com)'
 inputs:
-  issue-id: # ID of the issue to modify
+  issue-number: # Number of the issue to modify
     required: true
-    description: 'ID of the issue to modify'
+    description: 'Number of the issue to modify'
   label-id: # ID of the label to add
     required: true
     description: 'ID of the label to add'
