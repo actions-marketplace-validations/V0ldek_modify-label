@@ -1,0 +1,19 @@
+name: New Issue
+on:
+  issues:
+    types: [opened, reopened]
+  workflow_dispatch:
+
+jobs:
+  label:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+    - uses: ./
+      with:
+        issue-id: ${{ github.event.issue.id }}
+        label-id: 'LA_kwDOIf586M8AAAABIGMImg'
+        token: ${{ secrets.GITHUB_TOKEN }}
