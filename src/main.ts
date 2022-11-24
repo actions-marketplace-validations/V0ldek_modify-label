@@ -13,7 +13,7 @@ async function actuallyRun(): Promise<void> {
   const token = core.getInput('token')
   const octokit = github.getOctokit(token)
   const issueId: string = core.getInput('issue-id')
-  const labelId: string = core.getInput('label-id')
+  // const labelId: string = core.getInput('label-id')
   const context = github.context
   const graphql = octokit.graphql.defaults({
     headers: {
@@ -22,21 +22,20 @@ async function actuallyRun(): Promise<void> {
   })
 
   const query = `
-query GetLabels($owner: String!, $repo: String!, $issueId: String!, $labelId: String!, $limit: Int = 1000) {
-  repository(owner: $owner, $repo: $repo) {
-    issue(id: $issueId) {
-      labels(first: $limit) {
-        nodes {
-          id
+  query GetLabels($owner: String!, $repo: String!, $issueNumber: Int!, $limit: Int = 100) {
+    repository(owner: $owner, name: $repo) {
+      issue(number: $issueNumber) {
+        labels(first: $limit) {
+          nodes {
+            id
+          }
         }
       }
     }
-  }
-}`
+  }`
   const queryResult: GetLabelsResponse = await graphql(query, {
     ...context.repo,
-    issueId,
-    labelId
+    issueId
   })
 
   core.setOutput('result', JSON.stringify(queryResult))
