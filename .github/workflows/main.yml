@@ -15,6 +15,6 @@ jobs:
     - uses: actions/checkout@v2
     - uses: ./
       with:
-        issue-id: ${{ github.event.issue.id }}
+        issue-id: ${{ github.event.issue.number }}
         label-id: 'LA_kwDOIf586M8AAAABIGMImg'
         token: ${{ secrets.GITHUB_TOKEN }}
