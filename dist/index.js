@@ -52,7 +52,7 @@ function actuallyRun() {
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
-        const issueNumber = core.getInput('issue-number');
+        const issueNumber = parseInt(core.getInput('issue-number'));
         // const labelId: string = core.getInput('label-id')
         const context = github.context;
         const graphql = octokit.graphql.defaults({

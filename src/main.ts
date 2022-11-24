@@ -12,7 +12,7 @@ async function run(): Promise<void> {
 async function actuallyRun(): Promise<void> {
   const token = core.getInput('token')
   const octokit = github.getOctokit(token)
-  const issueNumber: string = core.getInput('issue-number')
+  const issueNumber: number = parseInt(core.getInput('issue-number'))
   // const labelId: string = core.getInput('label-id')
   const context = github.context
   const graphql = octokit.graphql.defaults({
