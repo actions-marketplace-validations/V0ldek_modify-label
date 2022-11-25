@@ -79,16 +79,17 @@ function actuallyRun() {
         const labels = queryResult.repository.issue.labels.nodes.map(x => x.id);
         labels.push(labelId);
         const mutation = `
-  mutation SetLabel($owner: String!, $repo: String!, $issueId: String!, $labels: [String!]) {
+  mutation SetLabel($issueId: String!, $labels: [String!]) {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
-    }) {
-    }
+    })
   }
   `;
-        const mutationResult = yield graphql(mutation, Object.assign(Object.assign({}, context.repo), { issueId,
-            labels }));
+        const mutationResult = yield graphql(mutation, {
+            issueId,
+            labels
+        });
         core.debug(JSON.stringify(mutationResult));
     });
 }
