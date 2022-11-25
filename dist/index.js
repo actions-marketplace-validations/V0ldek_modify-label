@@ -53,7 +53,7 @@ function actuallyRun() {
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
         const issueNumber = parseInt(core.getInput('issue-number'));
-        // const labelId: string = core.getInput('label-id')
+        const labelId = core.getInput('label-id');
         const context = github.context;
         const graphql = octokit.graphql.defaults({
             headers: {
@@ -64,6 +64,7 @@ function actuallyRun() {
   query GetLabels($owner: String!, $repo: String!, $issueNumber: Int!, $limit: Int = 100) {
     repository(owner: $owner, name: $repo) {
       issue(number: $issueNumber) {
+        id
         labels(first: $limit) {
           nodes {
             id
@@ -73,7 +74,22 @@ function actuallyRun() {
     }
   }`;
         const queryResult = yield graphql(query, Object.assign(Object.assign({}, context.repo), { issueNumber }));
-        core.setOutput('result', JSON.stringify(queryResult));
+        core.debug(JSON.stringify(queryResult));
+        const issueId = queryResult.repository.issue.id;
+        const labels = queryResult.repository.issue.labels.nodes.map(x => x.id);
+        labels.push(labelId);
+        const mutation = `
+  mutation SetLabel($owner: String!, $repo: String!, $issueId: String!, $labels: [String!]) {
+    updateIssue(input: {
+      id: $issueId,
+      labelIds: $labels
+    }) {
+    }
+  }
+  `;
+        const mutationResult = yield graphql(mutation, Object.assign(Object.assign({}, context.repo), { issueId,
+            labels }));
+        core.debug(JSON.stringify(mutationResult));
     });
 }
 run();
