@@ -83,7 +83,9 @@ function actuallyRun() {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
-    })
+    }) {
+      clientMutationId
+    }
   }
   `;
         const mutationResult = yield graphql(mutation, {
