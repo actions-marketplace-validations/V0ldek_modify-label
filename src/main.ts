@@ -76,7 +76,7 @@ async function actuallyRun(): Promise<void> {
   if (action === Action.Add) {
     labels.push(labelId)
   } else {
-    labels = labels.filter(x => x !== issueId)
+    labels = labels.filter(x => x !== labelId)
   }
 
   core.debug(JSON.stringify(labels))

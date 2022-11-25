@@ -98,7 +98,7 @@ function actuallyRun() {
             labels.push(labelId);
         }
         else {
-            labels = labels.filter(x => x !== issueId);
+            labels = labels.filter(x => x !== labelId);
         }
         core.debug(JSON.stringify(labels));
         const mutation = `
