@@ -46,7 +46,7 @@ async function actuallyRun(): Promise<void> {
   labels.push(labelId)
 
   const mutation = `
-  mutation SetLabel($issueId: String!, $labels: [String!]) {
+  mutation SetLabel($issueId: ID!, $labels: [ID!]) {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
