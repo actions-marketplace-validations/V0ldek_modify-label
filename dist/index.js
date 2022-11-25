@@ -37,6 +37,11 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const core = __importStar(__nccwpck_require__(2186));
 const github = __importStar(__nccwpck_require__(5438));
+var Action;
+(function (Action) {
+    Action["Add"] = "add";
+    Action["Remove"] = "remove";
+})(Action || (Action = {}));
 function run() {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -49,11 +54,23 @@ function run() {
     });
 }
 function actuallyRun() {
+    var _a;
     return __awaiter(this, void 0, void 0, function* () {
         const token = core.getInput('token');
         const octokit = github.getOctokit(token);
         const issueNumber = parseInt(core.getInput('issue-number'));
         const labelId = core.getInput('label-id');
+        const actionString = (_a = core.getInput('action')) === null || _a === void 0 ? void 0 : _a.toLowerCase();
+        let action;
+        if (actionString === 'add') {
+            action = Action.Add;
+        }
+        else if (actionString === 'remove') {
+            action = Action.Remove;
+        }
+        else {
+            throw new Error(`invalid action value: '${actionString}'`);
+        }
         const context = github.context;
         const graphql = octokit.graphql.defaults({
             headers: {
@@ -76,8 +93,13 @@ function actuallyRun() {
         const queryResult = yield graphql(query, Object.assign(Object.assign({}, context.repo), { issueNumber }));
         core.debug(JSON.stringify(queryResult));
         const issueId = queryResult.repository.issue.id;
-        const labels = queryResult.repository.issue.labels.nodes.map(x => x.id);
-        labels.push(labelId);
+        let labels = queryResult.repository.issue.labels.nodes.map(x => x.id);
+        if (action === Action.Add) {
+            labels.push(labelId);
+        }
+        else {
+            labels = labels.filter(x => x !== issueId);
+        }
         const mutation = `
   mutation SetLabel($issueId: ID!, $labels: [ID!]) {
     updateIssue(input: {

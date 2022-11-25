@@ -1,6 +1,22 @@
 import * as core from '@actions/core'
 import * as github from '@actions/github'
 
+interface GetLabelsResponse {
+  repository: {
+    issue: {
+      id: string
+      labels: {
+        nodes: [{id: string}]
+      }
+    }
+  }
+}
+
+enum Action {
+  Add = 'add',
+  Remove = 'remove'
+}
+
 async function run(): Promise<void> {
   try {
     await actuallyRun()
@@ -14,6 +30,17 @@ async function actuallyRun(): Promise<void> {
   const octokit = github.getOctokit(token)
   const issueNumber: number = parseInt(core.getInput('issue-number'))
   const labelId: string = core.getInput('label-id')
+  const actionString: string = core.getInput('action')?.toLowerCase()
+  let action: Action
+
+  if (actionString === 'add') {
+    action = Action.Add
+  } else if (actionString === 'remove') {
+    action = Action.Remove
+  } else {
+    throw new Error(`invalid action value: '${actionString}'`)
+  }
+
   const context = github.context
   const graphql = octokit.graphql.defaults({
     headers: {
@@ -42,8 +69,15 @@ async function actuallyRun(): Promise<void> {
   core.debug(JSON.stringify(queryResult))
 
   const issueId = queryResult.repository.issue.id
-  const labels = queryResult.repository.issue.labels.nodes.map(x => x.id)
-  labels.push(labelId)
+  let labels: string[] = queryResult.repository.issue.labels.nodes.map(
+    x => x.id
+  )
+
+  if (action === Action.Add) {
+    labels.push(labelId)
+  } else {
+    labels = labels.filter(x => x !== issueId)
+  }
 
   const mutation = `
   mutation SetLabel($issueId: ID!, $labels: [ID!]) {
@@ -64,14 +98,3 @@ async function actuallyRun(): Promise<void> {
 }
 
 run()
-
-interface GetLabelsResponse {
-  repository: {
-    issue: {
-      id: string
-      labels: {
-        nodes: [{id: string}]
-      }
-    }
-  }
-}

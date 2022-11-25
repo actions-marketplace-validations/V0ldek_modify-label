@@ -1,7 +1,10 @@
-name: 'Add label'
-description: 'Add a label to an issue or pull request'
+name: 'Modify label'
+description: 'Modify labels of an issue or pull request'
 author: 'V0ldek (mat@gienieczko.com)'
 inputs:
+  action: # Whether to add or remove the label
+    required: true
+    description: 'Allowed values: add, remove'
   issue-number: # Number of the issue to modify
     required: true
     description: 'Number of the issue to modify'
