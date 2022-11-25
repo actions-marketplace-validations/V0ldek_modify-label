@@ -1,0 +1,25 @@
+name: Closed Issue
+on:
+  issues:
+    types: [closed]
+  workflow_dispatch:
+  
+env:
+  ACTIONS_STEP_DEBUG: 1
+
+jobs:
+  label:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ./
+      id: add-label
+      with:
+        action: remove
+        issue-number: ${{ github.event.issue.number }}
+        label-id: 'LA_kwDOIf586M8AAAABIGMImg'
+        token: ${{ secrets.GITHUB_TOKEN }}
