@@ -19,6 +19,7 @@ jobs:
     - uses: ./
       id: add-label
       with:
+        action: add
         issue-number: ${{ github.event.issue.number }}
         label-id: 'LA_kwDOIf586M8AAAABIGMImg'
         token: ${{ secrets.GITHUB_TOKEN }}
