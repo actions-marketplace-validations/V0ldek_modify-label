@@ -79,7 +79,7 @@ function actuallyRun() {
         const labels = queryResult.repository.issue.labels.nodes.map(x => x.id);
         labels.push(labelId);
         const mutation = `
-  mutation SetLabel($issueId: String!, $labels: [String!]) {
+  mutation SetLabel($issueId: ID!, $labels: [ID!]) {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
