@@ -50,7 +50,9 @@ async function actuallyRun(): Promise<void> {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
-    })
+    }) {
+      clientMutationId
+    }
   }
   `
   const mutationResult = await graphql(mutation, {
