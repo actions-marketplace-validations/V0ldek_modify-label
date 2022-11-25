@@ -22,4 +22,3 @@ jobs:
         issue-number: ${{ github.event.issue.number }}
         label-id: 'LA_kwDOIf586M8AAAABIGMImg'
         token: ${{ secrets.GITHUB_TOKEN }}
-    - run: 'echo "${{ steps.add-label.outputs.result }}"'
