@@ -79,6 +79,8 @@ async function actuallyRun(): Promise<void> {
     labels = labels.filter(x => x !== issueId)
   }
 
+  core.debug(JSON.stringify(labels))
+
   const mutation = `
   mutation SetLabel($issueId: ID!, $labels: [ID!]) {
     updateIssue(input: {
