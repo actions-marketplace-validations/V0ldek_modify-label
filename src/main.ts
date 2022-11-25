@@ -46,16 +46,14 @@ async function actuallyRun(): Promise<void> {
   labels.push(labelId)
 
   const mutation = `
-  mutation SetLabel($owner: String!, $repo: String!, $issueId: String!, $labels: [String!]) {
+  mutation SetLabel($issueId: String!, $labels: [String!]) {
     updateIssue(input: {
       id: $issueId,
       labelIds: $labels
-    }) {
-    }
+    })
   }
   `
   const mutationResult = await graphql(mutation, {
-    ...context.repo,
     issueId,
     labels
   })
